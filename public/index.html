@@ -3,9 +3,87 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Walmex Challenge</title>
+    <link rel="shortcut icon" type="img/png" href="/favicon.png">
+    <link rel = "stylesheet"
+    href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel = "stylesheet"  href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+    <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"> </script>  
 </head>
 <body>
-    Fill me in :)
+    
+    <div class="container input-field col s12 m6">
+        <h1>All Users</h1>
+        <p>Users and their age</p>
+        <table class="responsive-table highlight">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Age</th>
+            </tr>
+          </thead>
+          <tbody id="users"></tbody>
+        </table>
+      </div>
+  
+      <div class="container input-field col s12 m6">
+        <h1>Age Demographic of Users With _</h1>
+        <select id="items" class="btn btn-primary btn-sm dropdown-toggle">
+          <option value="" disabled selected hidden>Item</option>
+          <option value="carrot">carrot</option>
+          <option value="apple">apple</option>
+          <option value="grapes">grapes</option>
+          <option value="cake">cake</option>
+          <option value="tv">tv</option>
+          <option value="crackers">crackers</option>
+          <option value="chips">chips</option>
+          <option value="ham">ham</option>
+        </select>
+        <table class="responsive-table highlight">
+          <thead>
+            <tr>
+              <th>Age</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody id="clusters"></tbody>
+        </table>
+      </div>
+    </body>
+    <script>
+      $.ajax({
+        url: "/users",
+        success: (users) => {
+          users = JSON.parse(users);
+          for (let user of users) {
+            const td1 = $("<td></td>").text(user.username);
+            const td2 = $("<td></td>").text(user.age);
+            const tr = $("<tr></tr>").append(td1, td2);
+            $("#users").append(tr);
+          }
+        },
+      });
+  
+      $("#items").change(function () {
+        $("#clusters").empty();
+        const $option = $(this).find("option:selected");
+        const value = $option.val();
+        if (!value) return;
+        $.ajax({
+          url: `/users/age?item=${value}`,
+          success: (clusters) => {
+            clusters = JSON.parse(clusters);
+            for (let cluster of clusters) {
+              const td1 = $("<td></td>").text(cluster.age);
+              const td2 = $("<td></td>").text(cluster.count);
+              const tr = $("<tr></tr>").append(td1, td2);
+              $("#clusters").append(tr);
+            }
+          },
+        });
+      });
+    </script>
 </body>
 </html>

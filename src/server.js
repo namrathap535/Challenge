@@ -1,5 +1,7 @@
 'use strict';
+const { request, response } = require('express');
 const express = require('express');
+
 const app = express();
 const registerRoutes = require('./routes');
 
@@ -8,6 +10,9 @@ const port = process.env.PORT || 3000;
 
 // register routes
 registerRoutes(app);
+
+app.use(express.static('public'));
+
 
 // create server start method
 const start = () => {
